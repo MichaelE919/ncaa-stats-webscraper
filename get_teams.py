@@ -33,7 +33,19 @@ def take(n, iterable):
     return list(islice(iterable, n))
 
 
-# grab top 68 teams and print the team names
+# grab top 68 teams and create list of teams and list of url references
 top_68 = take(68, full_teams_list.items())
+teams_list = []
+url_ref_list = []
 for tup in top_68:
-    print('Team: %s\nURL Reference: %s\n' % (tup[0], tup[1]))
+    teams_list.append(tup[0])
+    url_ref_list.append(tup[1])
+
+# build two lists of urls to scrap stats for each team
+stat_url_list = []
+sos_url_list = []
+for url in url_ref_list:
+    stat_url_list.append('https://www.teamrankings.com/ncaa-basketball/team/' +
+                         url + '/stats')
+    sos_url_list.append('https://www.teamrankings.com/ncaa-basketball/team/' +
+                        url + '/rankings')
