@@ -1,5 +1,5 @@
-kenpom.py
-test.py
 .ropeproject/
 *.htm
 *_files/
+*.py
+!get_teams.py
