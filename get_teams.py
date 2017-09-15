@@ -5,12 +5,17 @@ Python webscrapping module.
 Webscrap teamrankings.com website to obtain a list of the top 68 basketball
 teams and url references to use for webscrapping other websites for team stats.
 """
+import re
+import time
 from itertools import islice
 
+import pandas
 import requests
 from bs4 import BeautifulSoup
 
+start = time.time()
 # assign url to variable and use requests to get html
+print('Getting a list of all teams.')
 url = 'https://www.teamrankings.com/ncb/'
 teams_page = requests.get(url)
 teams = teams_page.content
@@ -26,6 +31,7 @@ for item in lst:
     # scrap url reference for team name (e.g., 'gonzaga-bulldogs')
     url_ref = item.find('a')['href'][22:]
     full_teams_list[team_name] = url_ref
+print('Done!')
 
 
 def take(n, iterable):
@@ -34,14 +40,17 @@ def take(n, iterable):
 
 
 # grab top 68 teams and create list of teams and list of url references
+print('Cutting that list to the top 68')
 top_68 = take(68, full_teams_list.items())
 teams_list = []
 url_ref_list = []
 for tup in top_68:
     teams_list.append(tup[0])
     url_ref_list.append(tup[1])
+print('Done!')
 
 # build two lists of urls to scrap stats for each team
+print('Building two lists of urls to parse')
 stat_url_list = []
 sos_url_list = []
 for url in url_ref_list:
@@ -49,7 +58,9 @@ for url in url_ref_list:
                          url + '/stats')
     sos_url_list.append('https://www.teamrankings.com/ncaa-basketball/team/' +
                         url + '/rankings')
+print('Done!')
 
+print('Getting stats')
 first_four = []
 five = []
 for stat in stat_url_list:
@@ -80,3 +91,33 @@ for sos in sos_url_list:
     for number2 in numbers2:
         s1.append(number2.text)
     five.append(s1[15])
+
+url1 = 'https://kenpom.com/'
+kp_page = requests.get(url1)
+kp = kp_page.content
+
+soup3 = BeautifulSoup(kp, 'html.parser')
+
+left = soup3.find_all('td', {'class': 'td-left'})
+names = soup3.find_all('a', {'href': re.compile('team\.php\?team=.+')})
+s2 = []
+n = []
+for number3 in left:
+    s2.append(number3.text)
+for name in names:
+    n.append(name.text)
+
+adjo = s2[0::8]
+adjd = s2[1::8]
+diff = []
+for o, d in zip(adjo, adjd):
+    diff.append(round(float(o) - float(d), 1))
+print('Done!')
+
+df = pandas.DataFrame([teams_list, first_four, five])
+
+print('Writing to CSV')
+df.to_csv('Output.csv')
+print('Done- Good luck!')
+end = time.time()
+print(end - start)
