@@ -12,6 +12,8 @@ from itertools import islice
 import pandas
 import requests
 from bs4 import BeautifulSoup
+from openpyxl import load_workbook
+from openpyxl.compat import range
 
 start = time.time()
 # assign url to variable and use requests to get html
@@ -131,12 +133,68 @@ for o, d in zip(adjo, adjd):
     diff.append(round(float(o) - float(d), 1))
 print('Done!')
 
-df = pandas.DataFrame([teams_list, eFG, TO, OR, FT, deFG, dTO, DR, dFT,
-                       five]).T
+# df = pandas.DataFrame([teams_list, eFG, TO, OR, FT, deFG, dTO, DR, dFT,
+#                        five]).T
 df2 = pandas.DataFrame([n, adjo, adjd, diff]).T
 
-print('Writing to CSV')
-df.to_csv('Output.csv')
+# load workbook object from Excel spreadsheet
+print('Adding to NCAA Bracket Spreadsheet')
+wb = load_workbook(filename='NCAA Bracket Spreadsheet.xlsx')
+sheet = wb.get_sheet_by_name('Provided Ranking')
+
+counter = 0
+for rowNum in range(3, 71):
+    sheet.cell(row=rowNum, column=2).value = teams_list[counter]
+    counter += 1
+
+counter1 = 0
+for rowNum in range(3, 71):
+    sheet.cell(row=rowNum, column=3).value = eFG[counter1]
+    counter1 += 1
+
+counter2 = 0
+for rowNum in range(3, 71):
+    sheet.cell(row=rowNum, column=4).value = TO[counter2]
+    counter2 += 1
+
+counter3 = 0
+for rowNum in range(3, 71):
+    sheet.cell(row=rowNum, column=5).value = OR[counter3]
+    counter3 += 1
+
+counter4 = 0
+for rowNum in range(3, 71):
+    sheet.cell(row=rowNum, column=6).value = FT[counter4]
+    counter4 += 1
+
+counter5 = 0
+for rowNum in range(3, 71):
+    sheet.cell(row=rowNum, column=7).value = deFG[counter5]
+    counter5 += 1
+
+counter6 = 0
+for rowNum in range(3, 71):
+    sheet.cell(row=rowNum, column=8).value = dTO[counter6]
+    counter6 += 1
+
+counter7 = 0
+for rowNum in range(3, 71):
+    sheet.cell(row=rowNum, column=9).value = DR[counter7]
+    counter7 += 1
+
+counter8 = 0
+for rowNum in range(3, 71):
+    sheet.cell(row=rowNum, column=10).value = dFT[counter8]
+    counter8 += 1
+
+counter9 = 0
+for rowNum in range(3, 71):
+    sheet.cell(row=rowNum, column=14).value = five[counter9]
+    counter9 += 1
+
+wb.save(filename='NCAA Bracket Spreadsheet-copy.xlsx')
+print('Done!')
+
 df2.to_csv('Output2.csv')
 print('Done- Good luck!')
 end = time.time()
