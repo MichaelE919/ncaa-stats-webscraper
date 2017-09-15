@@ -61,7 +61,15 @@ for url in url_ref_list:
 print('Done!')
 
 print('Getting stats')
-first_four = []
+# first_four = []
+eFG = []
+TO = []
+OR = []
+FT = []
+deFG = []
+dTO = []
+DR = []
+dFT = []
 five = []
 for stat in stat_url_list:
     stats_page = requests.get(stat)
@@ -73,11 +81,20 @@ for stat in stat_url_list:
     s = []
     for number in numbers:
         s.append(number.text)
-    st = [
-        s[25][:5], s[125][:5], s[97][:5], s[29][:5], s[27][:5], s[127][:5],
-        s[101][:5], s[31][:5]
-    ]
-    first_four.append(st)
+    eFG.append(s[25][:5])
+    TO.append(s[125][:5])
+    OR.append(s[97][:5])
+    FT.append(s[29][:5])
+    deFG.append(s[27][:5])
+    dTO.append(s[127][:5])
+    DR.append(s[101][:5])
+    dFT.append(s[31][:5])
+#    st = [
+#        s[25][:5], s[125][:5], s[97][:5], s[29][:5], s[27][:5], s[127][:5],
+#        s[101][:5], s[31][:5]
+#    ]
+#    for i in range(len(st)):
+#        first_four.append(st[i])
 
 for sos in sos_url_list:
     rankings_page = requests.get(sos)
@@ -114,10 +131,13 @@ for o, d in zip(adjo, adjd):
     diff.append(round(float(o) - float(d), 1))
 print('Done!')
 
-df = pandas.DataFrame([teams_list, first_four, five])
+df = pandas.DataFrame([teams_list, eFG, TO, OR, FT, deFG, dTO, DR, dFT,
+                       five]).T
+df2 = pandas.DataFrame([n, adjo, adjd, diff]).T
 
 print('Writing to CSV')
 df.to_csv('Output.csv')
+df2.to_csv('Output2.csv')
 print('Done- Good luck!')
 end = time.time()
 print(end - start)
