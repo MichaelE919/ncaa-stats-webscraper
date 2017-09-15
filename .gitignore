@@ -1,7 +1,5 @@
-NCAA College Basketball on TeamRankings.com.htm
-NCAA College Basketball on TeamRankings.com_files/
 kenpom.py
 test.py
-2017 Pomeroy College Basketball Ratings.htm
-2017 Pomeroy College Basketball Ratings_files/
 .ropeproject/
+*.htm
+*_files/
