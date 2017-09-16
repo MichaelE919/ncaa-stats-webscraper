@@ -14,6 +14,7 @@ import requests
 from bs4 import BeautifulSoup
 from openpyxl import load_workbook
 from openpyxl.compat import range
+from openpyxl.utils.dataframe import dataframe_to_rows
 
 start = time.time()
 # assign url to variable and use requests to get html
@@ -192,10 +193,34 @@ for rowNum in range(3, 71):
     sheet.cell(row=rowNum, column=14).value = five[counter9]
     counter9 += 1
 
+_adjo = []
+_adjd = []
+for r in dataframe_to_rows(df2, index=True, header=True):
+    if r[2] in teams_list:
+        _adjo.append(r[3])
+        _adjd.append(r[4])
+    else:
+        pass
+
+counter10 = 0
+for rowNum in range(3, 71):
+    try:
+        sheet.cell(row=rowNum, column=11).value = _adjo[counter10]
+        counter10 += 1
+    except IndexError:
+        sheet.cell(row=rowNum, column=11).value = 0.0
+
+counter11 = 0
+for rowNum in range(3, 71):
+    try:
+        sheet.cell(row=rowNum, column=12).value = _adjd[counter11]
+        counter11 += 1
+    except IndexError:
+        sheet.cell(row=rowNum, column=12).value = 0.0
+
 wb.save(filename='NCAA Bracket Spreadsheet-copy.xlsx')
 print('Done!')
 
-df2.to_csv('Output2.csv')
 print('Done- Good luck!')
 end = time.time()
 print(end - start)
