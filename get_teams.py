@@ -8,13 +8,13 @@ teams and url references to use for webscrapping other websites for team stats.
 import re
 import time
 from itertools import islice
+from difflib import get_close_matches
 
 import pandas
 import requests
 from bs4 import BeautifulSoup
 from openpyxl import load_workbook
 from openpyxl.compat import range
-from openpyxl.utils.dataframe import dataframe_to_rows
 
 start = time.time()
 # assign url to variable and use requests to get html
@@ -43,7 +43,7 @@ def take(n, iterable):
 
 
 # grab top 68 teams and create list of teams and list of url references
-print('Cutting that list to the top 68')
+print('Cutting that list to the top 68 teams')
 top_68 = take(68, full_teams_list.items())
 teams_list = []
 url_ref_list = []
@@ -63,8 +63,7 @@ for url in url_ref_list:
                         url + '/rankings')
 print('Done!')
 
-print('Getting stats')
-# first_four = []
+print('Getting stats from teamrankings.com')
 eFG = []
 TO = []
 OR = []
@@ -92,12 +91,6 @@ for stat in stat_url_list:
     dTO.append(s[127][:5])
     DR.append(s[101][:5])
     dFT.append(s[31][:5])
-#    st = [
-#        s[25][:5], s[125][:5], s[97][:5], s[29][:5], s[27][:5], s[127][:5],
-#        s[101][:5], s[31][:5]
-#    ]
-#    for i in range(len(st)):
-#        first_four.append(st[i])
 
 for sos in sos_url_list:
     rankings_page = requests.get(sos)
@@ -112,6 +105,7 @@ for sos in sos_url_list:
         s1.append(number2.text)
     five.append(s1[15])
 
+print('Getting stats from kenpom.com')
 url1 = 'https://kenpom.com/'
 kp_page = requests.get(url1)
 kp = kp_page.content
@@ -132,91 +126,61 @@ adjd = s2[1::8]
 diff = []
 for o, d in zip(adjo, adjd):
     diff.append(round(float(o) - float(d), 1))
+
 print('Done!')
 
-# df = pandas.DataFrame([teams_list, eFG, TO, OR, FT, deFG, dTO, DR, dFT,
-#                        five]).T
 df2 = pandas.DataFrame([n, adjo, adjd, diff]).T
+df2 = df2.set_index(0)
+
+df3 = pandas.DataFrame.to_dict(df2, orient='split')
+
+
+def getStats(team):
+    if team in df3['index']:
+        index = df3['index'].index(team)
+        return df3['data'][index]
+    elif len(get_close_matches(team, df3['index'], cutoff=0.92)) > 0:
+        b = get_close_matches(team, df3['index'], cutoff=0.92)[0]
+        index = df3['index'].index(b)
+        return df3['data'][index]
+    else:
+        return [0.0, 0.0, 0.0]
+
+
+_adjo = []
+_adjd = []
+_diff = []
+for team in teams_list:
+    _adjo.append(getStats(team)[0])
+    _adjd.append(getStats(team)[1])
+    _diff.append(getStats(team)[2])
 
 # load workbook object from Excel spreadsheet
 print('Adding to NCAA Bracket Spreadsheet')
 wb = load_workbook(filename='NCAA Bracket Spreadsheet.xlsx')
 sheet = wb.get_sheet_by_name('Provided Ranking')
 
-counter = 0
-for rowNum in range(3, 71):
-    sheet.cell(row=rowNum, column=2).value = teams_list[counter]
-    counter += 1
 
-counter1 = 0
-for rowNum in range(3, 71):
-    sheet.cell(row=rowNum, column=3).value = eFG[counter1]
-    counter1 += 1
+def writeToExcel(list, col):
+    counter = 0
+    for rowNum in range(3, 71):
+        sheet.cell(row=rowNum, column=col).value = list[counter]
+        counter += 1
 
-counter2 = 0
-for rowNum in range(3, 71):
-    sheet.cell(row=rowNum, column=4).value = TO[counter2]
-    counter2 += 1
 
-counter3 = 0
-for rowNum in range(3, 71):
-    sheet.cell(row=rowNum, column=5).value = OR[counter3]
-    counter3 += 1
-
-counter4 = 0
-for rowNum in range(3, 71):
-    sheet.cell(row=rowNum, column=6).value = FT[counter4]
-    counter4 += 1
-
-counter5 = 0
-for rowNum in range(3, 71):
-    sheet.cell(row=rowNum, column=7).value = deFG[counter5]
-    counter5 += 1
-
-counter6 = 0
-for rowNum in range(3, 71):
-    sheet.cell(row=rowNum, column=8).value = dTO[counter6]
-    counter6 += 1
-
-counter7 = 0
-for rowNum in range(3, 71):
-    sheet.cell(row=rowNum, column=9).value = DR[counter7]
-    counter7 += 1
-
-counter8 = 0
-for rowNum in range(3, 71):
-    sheet.cell(row=rowNum, column=10).value = dFT[counter8]
-    counter8 += 1
-
-counter9 = 0
-for rowNum in range(3, 71):
-    sheet.cell(row=rowNum, column=14).value = five[counter9]
-    counter9 += 1
-
-_adjo = []
-_adjd = []
-for r in dataframe_to_rows(df2, index=True, header=True):
-    if r[2] in teams_list:
-        _adjo.append(r[3])
-        _adjd.append(r[4])
-    else:
-        pass
-
-counter10 = 0
-for rowNum in range(3, 71):
-    try:
-        sheet.cell(row=rowNum, column=11).value = _adjo[counter10]
-        counter10 += 1
-    except IndexError:
-        sheet.cell(row=rowNum, column=11).value = 0.0
-
-counter11 = 0
-for rowNum in range(3, 71):
-    try:
-        sheet.cell(row=rowNum, column=12).value = _adjd[counter11]
-        counter11 += 1
-    except IndexError:
-        sheet.cell(row=rowNum, column=12).value = 0.0
+writeToExcel(teams_list, 2)
+writeToExcel(eFG, 3)
+writeToExcel(TO, 4)
+writeToExcel(OR, 5)
+writeToExcel(FT, 6)
+writeToExcel(deFG, 7)
+writeToExcel(dTO, 8)
+writeToExcel(DR, 9)
+writeToExcel(dFT, 10)
+writeToExcel(five, 14)
+writeToExcel(_adjo, 11)
+writeToExcel(_adjd, 12)
+writeToExcel(_diff, 13)
 
 wb.save(filename='NCAA Bracket Spreadsheet-copy.xlsx')
 print('Done!')
