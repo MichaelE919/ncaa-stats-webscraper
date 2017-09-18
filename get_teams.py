@@ -34,7 +34,8 @@ full_teams_list = {}
 lst = soup.find_all('div', {'class': 'table-team-logo-text'})
 for item in lst:
     team_name = item.find('a').text
-    # scrap url reference for team name (e.g., 'gonzaga-bulldogs')
+    # scrap url reference for team name (e.g., 'gonzaga-bulldogs') and add to
+    # dictionary
     url_ref = item.find('a')['href'][22:]
     full_teams_list[team_name] = url_ref
 print('Done!')
@@ -67,6 +68,7 @@ for url in url_ref_list:
 print('Done!')
 
 print('Getting stats from teamrankings.com')
+# create empty lists to hold stats
 eFG = []
 TO = []
 OR = []
@@ -76,6 +78,8 @@ dTO = []
 DR = []
 dFT = []
 five = []
+# loop through the first url list for each team to get the stats and add to the
+# empty lists
 for stat in stat_url_list:
     stats_page = requests.get(stat)
     stats = stats_page.content
@@ -83,9 +87,12 @@ for stat in stat_url_list:
     soup1 = BeautifulSoup(stats, 'html.parser')
 
     numbers = soup1.find_all('td', {'class': 'nowrap'})
+    # temporary list
     s = []
     for number in numbers:
+        # this will add all the stats from the url, even those we don't need
         s.append(number.text)
+    # use list indexing and slicing to add only the stats we want
     eFG.append(s[25][:5])
     TO.append(s[125][:5])
     OR.append(s[97][:5])
@@ -95,6 +102,7 @@ for stat in stat_url_list:
     DR.append(s[101][:5])
     dFT.append(s[31][:5])
 
+# same thing but for the second url list
 for sos in sos_url_list:
     rankings_page = requests.get(sos)
     rankings = rankings_page.content
@@ -108,13 +116,16 @@ for sos in sos_url_list:
         s1.append(number2.text)
     five.append(s1[15])
 
+# assign url to variable and use requests to get html
 print('Getting stats from kenpom.com')
 url1 = 'https://kenpom.com/'
 kp_page = requests.get(url1)
 kp = kp_page.content
 
+# parse html with BeautifulSoup
 soup3 = BeautifulSoup(kp, 'html.parser')
 
+# create lists of the team names and stats (again, all teams and stats)
 left = soup3.find_all('td', {'class': 'td-left'})
 names = soup3.find_all('a', {'href': re.compile('team\.php\?team=.+')})
 s2 = []
@@ -124,17 +135,23 @@ for number3 in left:
 for name in names:
     n.append(name.text)
 
+# use list slicing to get only the stats we need and add to two new lists
 adjo = s2[0::8]
 adjd = s2[1::8]
+# create a third list to hold the difference of lists one and two
 diff = []
 for o, d in zip(adjo, adjd):
     diff.append(round(float(o) - float(d), 1))
 
 print('Done!')
 
+# convert the four lists into a DataFrame object
 df2 = pandas.DataFrame([n, adjo, adjd, diff]).T
+# set the team name as the DataFrame index
 df2 = df2.set_index(0)
 
+# convert the DataFrame to a dictionary, splitting the team names and stats
+# into separate dictionaries
 df3 = pandas.DataFrame.to_dict(df2, orient='split')
 
 
@@ -151,9 +168,12 @@ def getStats(team):
         return [0.0, 0.0, 0.0]
 
 
+# create new lists to hold the stats for the top 68 teams only
 _adjo = []
 _adjd = []
 _diff = []
+# use the getStats function to match team names from both websites and get the
+# stats from kenpom.com for that team
 for team in teams_list:
     _adjo.append(getStats(team)[0])
     _adjd.append(getStats(team)[1])
@@ -173,6 +193,7 @@ def writeToExcel(list, col):
         counter += 1
 
 
+# use writeToExcel function to stats from all 13 lists to the Excel spreadsheet
 writeToExcel(teams_list, 2)
 writeToExcel(eFG, 3)
 writeToExcel(TO, 4)
@@ -187,6 +208,7 @@ writeToExcel(_adjo, 11)
 writeToExcel(_adjd, 12)
 writeToExcel(_diff, 13)
 
+# save copy of Excel spreadsheet
 wb.save(filename='NCAA Bracket Spreadsheet-copy.xlsx')
 print('Done!')
 
