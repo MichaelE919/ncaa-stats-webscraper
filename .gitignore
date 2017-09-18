@@ -3,3 +3,6 @@
 *_files/
 *.py
 !get_teams.py
+*.swp
+*.ipynb
+*_checkpoints/
