@@ -4,11 +4,14 @@ Python webscrapping module.
 
 Webscrap teamrankings.com website to obtain a list of the top 68 basketball
 teams and url references to use for webscrapping other websites for team stats.
+
+For each of the 68 teams, webscrap teamrankings.com and kenpom.com for lists
+of 10 key stats, then write those stats to an existing Excel spreadsheet.
 """
 import re
 import time
-from itertools import islice
 from difflib import get_close_matches
+from itertools import islice
 
 import pandas
 import requests
@@ -136,6 +139,7 @@ df3 = pandas.DataFrame.to_dict(df2, orient='split')
 
 
 def getStats(team):
+    """Return list of stats for team if that team is found or return 0.0."""
     if team in df3['index']:
         index = df3['index'].index(team)
         return df3['data'][index]
@@ -162,6 +166,7 @@ sheet = wb.get_sheet_by_name('Provided Ranking')
 
 
 def writeToExcel(list, col):
+    """Write data to the Excel spreadsheet."""
     counter = 0
     for rowNum in range(3, 71):
         sheet.cell(row=rowNum, column=col).value = list[counter]
