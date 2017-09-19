@@ -12,12 +12,25 @@ import re
 import time
 from difflib import get_close_matches
 from itertools import islice
+from progressbar import Bar, Percentage, ProgressBar
 
 import pandas
 import requests
 from bs4 import BeautifulSoup
 from openpyxl import load_workbook
 from openpyxl.compat import range
+
+# create ProgressBar objects
+p1 = ProgressBar(widgets=[Percentage(), Bar()], maxval=300)
+p2 = ProgressBar(widgets=[Percentage(), Bar()], maxval=300)
+p3 = ProgressBar(widgets=[Percentage(), Bar()], maxval=300)
+p4 = ProgressBar(widgets=[Percentage(), Bar()], maxval=300)
+p5 = ProgressBar(widgets=[Percentage(), Bar()], maxval=300)
+p6 = ProgressBar(widgets=[Percentage(), Bar()], maxval=300)
+p7 = ProgressBar(widgets=[Percentage(), Bar()], maxval=300)
+p8 = ProgressBar(widgets=[Percentage(), Bar()], maxval=300)
+p9 = ProgressBar(widgets=[Percentage(), Bar()], maxval=300)
+p10 = ProgressBar(widgets=[Percentage(), Bar()], maxval=300)
 
 start = time.time()
 # assign url to variable and use requests to get html
@@ -32,7 +45,8 @@ soup = BeautifulSoup(teams, 'html.parser')
 # scrap all team names and add to a dictionary
 full_teams_list = {}
 lst = soup.find_all('div', {'class': 'table-team-logo-text'})
-for item in lst:
+
+for item in p1(lst):
     team_name = item.find('a').text
     # scrap url reference for team name (e.g., 'gonzaga-bulldogs') and add to
     # dictionary
@@ -51,7 +65,7 @@ print('Cutting that list to the top 68 teams')
 top_68 = take(68, full_teams_list.items())
 teams_list = []
 url_ref_list = []
-for tup in top_68:
+for tup in p2(top_68):
     teams_list.append(tup[0])
     url_ref_list.append(tup[1])
 print('Done!')
@@ -60,7 +74,7 @@ print('Done!')
 print('Building two lists of urls to parse')
 stat_url_list = []
 sos_url_list = []
-for url in url_ref_list:
+for url in p3(url_ref_list):
     stat_url_list.append('https://www.teamrankings.com/ncaa-basketball/team/' +
                          url + '/stats')
     sos_url_list.append('https://www.teamrankings.com/ncaa-basketball/team/' +
@@ -80,7 +94,8 @@ dFT = []
 five = []
 # loop through the first url list for each team to get the stats and add to the
 # empty lists
-for stat in stat_url_list:
+print('First Four')
+for stat in p4(stat_url_list):
     stats_page = requests.get(stat)
     stats = stats_page.content
 
@@ -103,7 +118,8 @@ for stat in stat_url_list:
     dFT.append(s[31][:5])
 
 # same thing but for the second url list
-for sos in sos_url_list:
+print('Strength of Schedule')
+for sos in p5(sos_url_list):
     rankings_page = requests.get(sos)
     rankings = rankings_page.content
 
@@ -115,6 +131,7 @@ for sos in sos_url_list:
     for number2 in numbers2:
         s1.append(number2.text)
     five.append(s1[15])
+print('Done!')
 
 # assign url to variable and use requests to get html
 print('Getting stats from kenpom.com')
@@ -130,9 +147,11 @@ left = soup3.find_all('td', {'class': 'td-left'})
 names = soup3.find_all('a', {'href': re.compile('team\.php\?team=.+')})
 s2 = []
 n = []
-for number3 in left:
+print('Stats')
+for number3 in p7(left):
     s2.append(number3.text)
-for name in names:
+print('Teams')
+for name in p8(names):
     n.append(name.text)
 
 # use list slicing to get only the stats we need and add to two new lists
@@ -174,7 +193,8 @@ _adjd = []
 _diff = []
 # use the getStats function to match team names from both websites and get the
 # stats from kenpom.com for that team
-for team in teams_list:
+print('Getting the right stats for the right teams')
+for team in p9(teams_list):
     _adjo.append(getStats(team)[0])
     _adjd.append(getStats(team)[1])
     _diff.append(getStats(team)[2])
@@ -212,6 +232,7 @@ writeToExcel(_diff, 13)
 wb.save(filename='NCAA Bracket Spreadsheet-copy.xlsx')
 print('Done!')
 
-print('Done- Good luck!')
 end = time.time()
-print(end - start)
+total_time = round((end - start) / 60, 2)
+print('All steps complete.\nScript completed in %s minutes.\nGood luck!' %
+      total_time)
