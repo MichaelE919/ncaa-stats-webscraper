@@ -12,13 +12,13 @@ import re
 import time
 from difflib import get_close_matches
 from itertools import islice
-from progressbar import Bar, Percentage, ProgressBar
 
 import pandas
 import requests
 from bs4 import BeautifulSoup
 from openpyxl import load_workbook
 from openpyxl.compat import range
+from progressbar import Bar, Percentage, ProgressBar
 
 # create ProgressBar objects
 p1 = ProgressBar(widgets=[Percentage(), Bar()], maxval=300)
@@ -148,10 +148,10 @@ names = soup3.find_all('a', {'href': re.compile('team\.php\?team=.+')})
 s2 = []
 n = []
 print('Stats')
-for number3 in p7(left):
+for number3 in p6(left):
     s2.append(number3.text)
 print('Teams')
-for name in p8(names):
+for name in p7(names):
     n.append(name.text)
 
 # use list slicing to get only the stats we need and add to two new lists
@@ -194,7 +194,7 @@ _diff = []
 # use the getStats function to match team names from both websites and get the
 # stats from kenpom.com for that team
 print('Getting the right stats for the right teams')
-for team in p9(teams_list):
+for team in p8(teams_list):
     _adjo.append(getStats(team)[0])
     _adjd.append(getStats(team)[1])
     _diff.append(getStats(team)[2])
@@ -214,19 +214,34 @@ def writeToExcel(list, col):
 
 
 # use writeToExcel function to stats from all 13 lists to the Excel spreadsheet
+pbar = ProgressBar(widgets=[Percentage(), Bar()], maxval=300).start()
 writeToExcel(teams_list, 2)
+pbar.update(8)
 writeToExcel(eFG, 3)
+pbar.update(7)
 writeToExcel(TO, 4)
+pbar.update(8)
 writeToExcel(OR, 5)
+pbar.update(7)
 writeToExcel(FT, 6)
+pbar.update(8)
 writeToExcel(deFG, 7)
+pbar.update(7)
 writeToExcel(dTO, 8)
+pbar.update(8)
 writeToExcel(DR, 9)
+pbar.update(7)
 writeToExcel(dFT, 10)
+pbar.update(8)
 writeToExcel(five, 14)
+pbar.update(7)
 writeToExcel(_adjo, 11)
+pbar.update(8)
 writeToExcel(_adjd, 12)
+pbar.update(7)
 writeToExcel(_diff, 13)
+pbar.update(8)
+pbar.finish()
 
 # save copy of Excel spreadsheet
 wb.save(filename='NCAA Bracket Spreadsheet-copy.xlsx')
