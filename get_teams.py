@@ -152,6 +152,28 @@ print('Teams')
 for name in p7(names):
     n.append(name.text)
 
+
+def swap(old_team, new_team):
+    """Replace old_team with new_team for list n."""
+    i = n.index(old_team)
+    n.remove(old_team)
+    n.insert(i, new_team)
+
+
+# replace team names so they match
+swap('North Carolina', 'N Carolina')
+swap('West Virginia', 'W Virginia')
+swap('Iowa St.', 'Iowa State')
+swap('SMU', 'S Methodist')
+swap('Saint Mary\'s', 'St Marys')
+swap('South Carolina', 'S Carolina')
+swap('Miami FL', 'Miami (FL)')
+swap('TCU', 'TX Christian')
+swap('Virginia Tech', 'VA Tech')
+swap('Middle Tennessee', 'Middle Tenn')
+swap('UNC Wilmington', 'NC-Wilmgton')
+swap('Ohio St.', 'Ohio State')
+
 # use list slicing to get only the stats we need and add to two new lists
 adjo = s2[0::8]
 adjd = s2[1::8]
