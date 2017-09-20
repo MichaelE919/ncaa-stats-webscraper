@@ -29,8 +29,6 @@ p5 = ProgressBar(widgets=[Percentage(), Bar()], maxval=300)
 p6 = ProgressBar(widgets=[Percentage(), Bar()], maxval=300)
 p7 = ProgressBar(widgets=[Percentage(), Bar()], maxval=300)
 p8 = ProgressBar(widgets=[Percentage(), Bar()], maxval=300)
-p9 = ProgressBar(widgets=[Percentage(), Bar()], maxval=300)
-p10 = ProgressBar(widgets=[Percentage(), Bar()], maxval=300)
 
 start = time.time()
 # assign url to variable and use requests to get html
