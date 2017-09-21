@@ -106,14 +106,14 @@ for stat in p4(stat_url_list):
         # this will add all the stats from the url, even those we don't need
         s.append(number.text)
     # use list indexing and slicing to add only the stats we want
-    eFG.append(s[25][:5])
-    TO.append(s[125][:5])
-    OR.append(s[97][:5])
-    FT.append(s[29][:5])
-    deFG.append(s[27][:5])
-    dTO.append(s[127][:5])
-    DR.append(s[101][:5])
-    dFT.append(s[31][:5])
+    eFG.append(float(s[25][:4]))
+    TO.append(float(s[125][:4]))
+    OR.append(float(s[97][:4]))
+    FT.append(float(s[29][:5]))
+    deFG.append(float(s[27][:4]))
+    dTO.append(float(s[127][:4]))
+    DR.append(float(s[101][:4]))
+    dFT.append(float(s[31][:5]))
 
 # same thing but for the second url list
 print('Strength of Schedule')
@@ -128,7 +128,7 @@ for sos in p5(sos_url_list):
     s1 = []
     for number2 in numbers2:
         s1.append(number2.text)
-    five.append(s1[15])
+    five.append(float(s1[15]))
 print('Done!')
 
 # assign url to variable and use requests to get html
@@ -147,7 +147,7 @@ s2 = []
 n = []
 print('Stats')
 for number3 in p6(left):
-    s2.append(number3.text)
+    s2.append(float(number3.text))
 print('Teams')
 for name in p7(names):
     n.append(name.text)
