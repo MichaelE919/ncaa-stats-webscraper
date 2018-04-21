@@ -18,22 +18,11 @@ import requests
 from bs4 import BeautifulSoup
 from openpyxl import load_workbook
 from openpyxl.compat import range
-from progressbar import Bar, Percentage, ProgressBar
-
-# create ProgressBar objects
-p1 = ProgressBar(widgets=[Percentage(), Bar()], maxval=300)
-p2 = ProgressBar(widgets=[Percentage(), Bar()], maxval=300)
-p3 = ProgressBar(widgets=[Percentage(), Bar()], maxval=300)
-p4 = ProgressBar(widgets=[Percentage(), Bar()], maxval=300)
-p5 = ProgressBar(widgets=[Percentage(), Bar()], maxval=300)
-p6 = ProgressBar(widgets=[Percentage(), Bar()], maxval=300)
-p7 = ProgressBar(widgets=[Percentage(), Bar()], maxval=300)
-p8 = ProgressBar(widgets=[Percentage(), Bar()], maxval=300)
 
 start = time.time()
 # assign url to variable and use requests to get html
 print('Getting a list of all teams.')
-url = 'https://www.teamrankings.com/ncb/'
+url = 'https://www.teamrankings.com/ncaa-tournament/bracketology/'
 teams_page = requests.get(url)
 teams = teams_page.content
 
@@ -42,13 +31,13 @@ soup = BeautifulSoup(teams, 'html.parser')
 
 # scrap all team names and add to a dictionary
 full_teams_list = {}
-lst = soup.find_all('div', {'class': 'table-team-logo-text'})
+lst = soup.find_all('td', {'class': 'text-left'})
 
-for item in p1(lst):
+for item in lst:
     team_name = item.find('a').text
     # scrap url reference for team name (e.g., 'gonzaga-bulldogs') and add to
     # dictionary
-    url_ref = item.find('a')['href'][22:]
+    url_ref = item.find('a')['href'][22:-13]
     full_teams_list[team_name] = url_ref
 print('Done!')
 
@@ -63,7 +52,7 @@ print('Cutting that list to the top 68 teams')
 top_68 = take(68, full_teams_list.items())
 teams_list = []
 url_ref_list = []
-for tup in p2(top_68):
+for tup in top_68:
     teams_list.append(tup[0])
     url_ref_list.append(tup[1])
 print('Done!')
@@ -72,7 +61,7 @@ print('Done!')
 print('Building two lists of urls to parse')
 stat_url_list = []
 sos_url_list = []
-for url in p3(url_ref_list):
+for url in url_ref_list:
     stat_url_list.append('https://www.teamrankings.com/ncaa-basketball/team/' +
                          url + '/stats')
     sos_url_list.append('https://www.teamrankings.com/ncaa-basketball/team/' +
@@ -93,7 +82,7 @@ five = []
 # loop through the first url list for each team to get the stats and add to the
 # empty lists
 print('First Four')
-for stat in p4(stat_url_list):
+for stat in stat_url_list:
     stats_page = requests.get(stat)
     stats = stats_page.content
 
@@ -117,7 +106,7 @@ for stat in p4(stat_url_list):
 
 # same thing but for the second url list
 print('Strength of Schedule')
-for sos in p5(sos_url_list):
+for sos in sos_url_list:
     rankings_page = requests.get(sos)
     rankings = rankings_page.content
 
@@ -146,10 +135,10 @@ names = soup3.find_all('a', {'href': re.compile('team\.php\?team=.+')})
 s2 = []
 n = []
 print('Stats')
-for number3 in p6(left):
+for number3 in left:
     s2.append(float(number3.text))
 print('Teams')
-for name in p7(names):
+for name in names:
     n.append(name.text)
 
 
@@ -163,15 +152,10 @@ def swap(old_team, new_team):
 # replace team names so they match
 swap('North Carolina', 'N Carolina')
 swap('West Virginia', 'W Virginia')
-swap('Iowa St.', 'Iowa State')
-swap('SMU', 'S Methodist')
 swap('Saint Mary\'s', 'St Marys')
-swap('South Carolina', 'S Carolina')
 swap('Miami FL', 'Miami (FL)')
 swap('TCU', 'TX Christian')
 swap('Virginia Tech', 'VA Tech')
-swap('Middle Tennessee', 'Middle Tenn')
-swap('UNC Wilmington', 'NC-Wilmgton')
 swap('Ohio St.', 'Ohio State')
 
 # use list slicing to get only the stats we need and add to two new lists
@@ -214,7 +198,7 @@ _diff = []
 # use the getStats function to match team names from both websites and get the
 # stats from kenpom.com for that team
 print('Getting the right stats for the right teams')
-for team in p8(teams_list):
+for team in teams_list:
     _adjo.append(getStats(team)[0])
     _adjd.append(getStats(team)[1])
     _diff.append(getStats(team)[2])
@@ -222,7 +206,7 @@ for team in p8(teams_list):
 # load workbook object from Excel spreadsheet
 print('Adding to NCAA Bracket Spreadsheet')
 wb = load_workbook(filename='NCAA Bracket Spreadsheet.xlsx')
-sheet = wb.get_sheet_by_name('Provided Ranking')
+sheet = wb['Provided Ranking']
 
 
 def writeToExcel(list, col):
@@ -234,34 +218,19 @@ def writeToExcel(list, col):
 
 
 # use writeToExcel function to stats from all 13 lists to the Excel spreadsheet
-pbar = ProgressBar(widgets=[Percentage(), Bar()], maxval=300).start()
 writeToExcel(teams_list, 2)
-pbar.update(8)
 writeToExcel(eFG, 3)
-pbar.update(7)
 writeToExcel(TO, 4)
-pbar.update(8)
 writeToExcel(OR, 5)
-pbar.update(7)
 writeToExcel(FT, 6)
-pbar.update(8)
 writeToExcel(deFG, 7)
-pbar.update(7)
 writeToExcel(dTO, 8)
-pbar.update(8)
 writeToExcel(DR, 9)
-pbar.update(7)
 writeToExcel(dFT, 10)
-pbar.update(8)
 writeToExcel(five, 14)
-pbar.update(7)
 writeToExcel(_adjo, 11)
-pbar.update(8)
 writeToExcel(_adjd, 12)
-pbar.update(7)
 writeToExcel(_diff, 13)
-pbar.update(8)
-pbar.finish()
 
 # save copy of Excel spreadsheet
 wb.save(filename='NCAA Bracket Spreadsheet-copy.xlsx')
