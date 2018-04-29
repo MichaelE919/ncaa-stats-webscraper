@@ -2,7 +2,7 @@
 *.htm
 *_files/
 *.py
-!get_teams.py
+!get_stats.py
 *.swp
 *.ipynb
 *_checkpoints/
