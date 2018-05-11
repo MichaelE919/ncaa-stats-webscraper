@@ -13,7 +13,7 @@ I credit most of the inspiration for this project to Al Sweigart's book [Automat
 
 ## The Four Factors
 
-If your are a basketball stats nerd, you may have heard this term. I read about this in an article, and I used it as a baseline for determining which team would win a particular matchup. The [Four Factors](https://www.nbastuffer.com/analytics101/four-factors/) are metrics that correlate with winning basketball games, and are comprised of the following stats: Effective Field Goal Percentage, Turnover Rate, Offensive Rebounding Percentage, and Free Throw Rate. These stats have become popular in predicting NBA and NCAA basketball games.
+If you are a basketball stats nerd, you may have heard this term. I read about this in an article, and I used it as a baseline for determining which team would win a particular matchup. The [Four Factors](https://www.nbastuffer.com/analytics101/four-factors/) are metrics that correlate with winning basketball games, and are comprised of the following stats: Effective Field Goal Percentage, Turnover Rate, Offensive Rebounding Percentage, and Free Throw Rate. These stats have become popular in predicting NBA and NCAA basketball games.
 
 ## Usage
 
