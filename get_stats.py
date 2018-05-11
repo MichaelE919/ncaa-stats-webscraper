@@ -233,7 +233,7 @@ writeToExcel(_adjd, 12)
 writeToExcel(_diff, 13)
 
 # save copy of Excel spreadsheet
-wb.save(filename='NCAA Bracket Spreadsheet-copy.xlsx')
+wb.save(filename='NCAA Bracket Spreadsheet-final.xlsx')
 print('Done!')
 
 end = time.time()
