@@ -8,32 +8,24 @@ With the help of the Pandas and Openpyxl libraries, the various team stats are w
 
 ## Background
 
-OS X & Linux:
-
-```sh
-npm install my-crazy-module --save
-```
-
-Windows:
-
-```sh
-edit autoexec.bat
-```
+This was the first Python project I worked on by myself after taking an online course and reading numerous articles and tutorials. For a couple of years, I used the Excel spreadsheet to determine my March Madness picks, but I *scraped* the data myself. It took hours (lots of hours), and eventually I thought, "There has to be a better way."
+I credit most of the inspiration for this project to Al Sweigart's book [Automate the Boring Stuff with Python](http://automatetheboringstuff.com/). There is one chapter on webscraping and another working with Excel spreasheets, and I was able to put that information to use to create this Python script.
 
 ## The Four Factors
 
-A few motivating and useful examples of how your product can be used. Spice this up with code blocks and potentially more screenshots.
-
-_For more examples and usage, please refer to the [Wiki][wiki]._
+If your are a basketball stats nerd, you may have heard this term. I read about this in an article, and I used it as a baseline for determining which team would win a particular matchup. The [Four Factors](https://www.nbastuffer.com/analytics101/four-factors/) are metrics that correlate with winning basketball games, and are comprised of the following stats: Effective Field Goal Percentage, Turnover Rate, Offensive Rebounding Percentage, and Free Throw Rate. These stats have become popular in predicting NBA and NCAA basketball games.
 
 ## Usage
 
-Describe how to install all development dependencies and how to run an automated test-suite of some kind. Potentially do this for multiple platforms.
+Clone or download the repository to your machine, change into the newly created directory, then run the script. Python takes care of the rest. (Almost, as I'll point out in a but.)
 
 ```sh
-make install
-npm test
+git clone https://github.com/MichaelE919/ncaa-stats-webscrapper.git
+cd ncaa-stats-webscrapper
+python get_stats.py
 ```
+The script will create a NCAA Bracket Spreadsheet-final.xlsx. Use this to make your picks. While the new spreadsheet now contains all the necessary stats for the 68 teams in the tournament, you must still create "bracket" manually by copying and pasting the rows for each team from the Provided Ranking tab to the First Four and Round of 64 tabs. A series of IF formulas populates the rest of the tabs and gives you the winner for each matchup including the championship game. 
+Basically, the IF formulas compare the values for each of the stats. Whichever team has the better value wins that stat, and whichever team wins the most stats, wins the matchup.
 
 ## Meta
 
@@ -45,16 +37,10 @@ Distributed under the MIT license. See ``LICENSE`` for more information.
 
 ## Next Steps
 
-1. Fork it (<https://github.com/yourname/yourproject/fork>)
-2. Create your feature branch (`git checkout -b feature/fooBar`)
-3. Commit your changes (`git commit -am 'Add some fooBar'`)
-4. Push to the branch (`git push origin feature/fooBar`)
-5. Create a new Pull Request
+At some point in the future, I'd like to make this script better by doing the following things:
 
-<!-- Markdown link & img dfn's -->
-[npm-image]: https://img.shields.io/npm/v/datadog-metrics.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/datadog-metrics
-[npm-downloads]: https://img.shields.io/npm/dm/datadog-metrics.svg?style=flat-square
-[travis-image]: https://img.shields.io/travis/dbader/node-datadog-metrics/master.svg?style=flat-square
-[travis-url]: https://travis-ci.org/dbader/node-datadog-metrics
-[wiki]: https://github.com/yourname/yourproject/wiki
+1. There are *a lot* of for loops. I'd like to speed them up by converting them to list comprehensions
+2. There are hard-coded elements that I'd like to replace with reusable code, if possible.
+3. Automate the manual work required in the Excel spreadsheet. As I said before I started this thing, "There's got to be a better way!"
+
+If anyone would like to take these on, please do so and create a pull request. I would love some feedback!
