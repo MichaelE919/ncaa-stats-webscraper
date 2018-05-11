@@ -1,4 +1,4 @@
-# NCAA Basketball Stats Webscrapper
+# NCAA Basketball Stats Webscraper
 > Collects team stats for the top 68 NCAA basketball teams and writes them to a preformatted Excel spreadsheet.
 
 This Python script uses the Request and Beautiful Soup libraries to collect team stats from teamrankings.com and kenpom.com and creates a series of lists and dictionaries to contain the information.
@@ -17,7 +17,7 @@ If your are a basketball stats nerd, you may have heard this term. I read about 
 
 ## Usage
 
-Clone or download the repository to your machine, change into the newly created directory, then run the script. Python takes care of the rest. (Almost, as I'll point out in a but.)
+Clone or download the repository to your machine, change into the newly created directory, then run the script. Python takes care of the rest. (Almost, as I'll point out in a bit.)
 
 ```sh
 git clone https://github.com/MichaelE919/ncaa-stats-webscrapper.git
