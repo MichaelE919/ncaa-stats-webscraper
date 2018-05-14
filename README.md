@@ -22,6 +22,7 @@ Clone or download the repository to your machine, change into the newly created 
 ```sh
 git clone https://github.com/MichaelE919/ncaa-stats-webscrapper.git
 cd ncaa-stats-webscrapper
+pip install -r requirements.txt
 python get_stats.py
 ```
 The script will create a NCAA Bracket Spreadsheet-final.xlsx. Use this to make your picks. While the new spreadsheet now contains all the necessary stats for the 68 teams in the tournament, you must still create "bracket" manually by copying and pasting the rows for each team from the Provided Ranking tab to the First Four and Round of 64 tabs. A series of IF formulas populates the rest of the tabs and gives you the winner for each matchup including the championship game. 
