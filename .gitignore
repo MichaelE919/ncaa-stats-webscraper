@@ -6,3 +6,4 @@
 *.swp
 *.ipynb
 *_checkpoints/
+.vscode/
