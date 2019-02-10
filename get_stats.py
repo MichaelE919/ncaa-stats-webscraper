@@ -17,7 +17,6 @@ import pandas
 import requests
 from bs4 import BeautifulSoup
 from openpyxl import load_workbook
-from openpyxl.compat import range
 
 start = time.time()
 # assign url to variable and use requests to get html
@@ -131,7 +130,7 @@ soup3 = BeautifulSoup(kp, 'html.parser')
 
 # create lists of the team names and stats (again, all teams and stats)
 left = soup3.find_all('td', {'class': 'td-left'})
-names = soup3.find_all('a', {'href': re.compile('team\.php\?team=.+')})
+names = soup3.find_all('a', {'href': re.compile(r'team\.php\?team=.+')})
 s2 = []
 n = []
 print('Stats')
@@ -205,7 +204,7 @@ for team in teams_list:
 
 # load workbook object from Excel spreadsheet
 print('Adding to NCAA Bracket Spreadsheet')
-wb = load_workbook(filename='NCAA Bracket Spreadsheet.xlsx')
+wb = load_workbook(filename='NCAA Bracket Spreadsheet-base.xlsx')
 sheet = wb['Provided Ranking']
 
 
